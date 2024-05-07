@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
+            // Connect to the WebSocket server
+            socket.on('connect', function() {
+                console.log('Connected to the WebSocket server!');
+                socket.emit('fetch_updates', {data: 'Request initial data'});
+            });
+
+            // Listen for update_response events
+            socket.on('update_response', function(data) {
+                console.log('Received updates:', data);
+                updateDashboard(data.data);
+            });
+
+            // Function to update the dashboard with new data
+            function updateDashboard(data) {
+                // Example: Update the number of new posts and new comments
+                if (data.new_posts !== undefined) {
+                    document.getElementById('new-posts-count').textContent = data.new_posts;
+                }
+                if (data.new_comments !== undefined) {
+                    document.getElementById('new-comments-count').textContent = data.new_comments;
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <div>
+        <p>New Posts: <span id="new-posts-count">0</span></p>
+        <p>New Comments: <span id="new-comments-count">0</span></p>
+    </div>
+</body>
+</html>
+
